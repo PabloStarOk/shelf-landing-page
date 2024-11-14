@@ -1,0 +1,59 @@
+# build output
+dist/
+
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+.pnpm-store/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store
+
+# JetBrains settings folder
+.idea/
+
+# temporary files
+*.tsbuildinfo
+*.code-workspace
+
+# Vercel & Netlify folders
+.vercel
+.netlify
+
+# test results
+test-results/
+benchmark/projects/
+benchmark/results/
+scripts/smoke/*-main/
+scripts/memory/project/src/pages/
+
+# exclude IntelliJ/WebStorm specific files
+.idea
+
+# content collection generated files (Astro-specific)
+packages/**/test/**/fixtures/**/.astro/
+packages/**/test/**/fixtures/**/env.d.ts
+packages/**/e2e/**/fixtures/**/.astro/
+packages/**/e2e/**/fixtures/**/env.d.ts
+examples/**/.astro/
+examples/**/env.d.ts
+
+# exclude prebuilt TypeScript files
+packages/astro/src/**/*.prebuilt.ts
+packages/astro/src/**/*.prebuilt-dev.ts
+
+# integration specific
+packages/integrations/**/.netlify/

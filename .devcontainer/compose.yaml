@@ -1,0 +1,37 @@
+version: '3.9'
+
+name: ${COMPOSE_NAME}
+
+services:
+  astro:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${ASTRO_NAME}
+    env_file:
+      - path: ./.env
+        required: ${ENV_FILE_REQUIRED}
+    restart: ${RESTART}
+    stdin_open: ${STDIN_OPEN} # True if it is a dev container
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      CI: ${CI_ENV}
+    volumes:
+     - type: ${WORKSPACE_MOUNT_TYPE}
+       source: ${WORKSPACE_SOURCE}
+       target: ${WORKSPACE_TARGET}
+    networks:
+      - AstroDevNetwork
+    deploy:
+      resources:
+        limits:
+          cpus: ${ASTRO_MAX_CPU_COUNT}
+          memory: ${ASTRO_MAX_MEM}
+        reservations:
+          cpus: ${ASTRO_MIN_CPU_COUNT}
+          memory: ${ASTRO_MIN_MEM}
+
+networks:
+  AstroDevNetwork:
+    name: ${NETWORK_NAME}
+    driver: ${NETWORK_DRIVER}
