@@ -25,3 +25,7 @@ Todos los comandos permitidos para ejecutar en la temrinal del proyecto:
 # 👀 Documentación de astro
 
 Revisa la [documentación](https://docs.astro.build) o ingresa al [Servidor de Discord](https://astro.build/chat).
+
+# Contribución
+
+Lee el archivo de contribución [Guia de contribución](CONTRIBUTING.md).
