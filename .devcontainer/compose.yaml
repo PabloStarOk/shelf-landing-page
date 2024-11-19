@@ -22,14 +22,6 @@ services:
        target: ${WORKSPACE_TARGET}
     networks:
       - AstroDevNetwork
-    deploy:
-      resources:
-        limits:
-          cpus: ${ASTRO_MAX_CPU_COUNT}
-          memory: ${ASTRO_MAX_MEM}
-        reservations:
-          cpus: ${ASTRO_MIN_CPU_COUNT}
-          memory: ${ASTRO_MIN_MEM}
 
 networks:
   AstroDevNetwork:
