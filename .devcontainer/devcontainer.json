@@ -20,7 +20,12 @@
                 "eamodio.gitlens",
                 "usernamehw.errorlens",
                 "christian-kohler.path-intellisense",
-                "leizongmin.node-module-intellisense"
+                "leizongmin.node-module-intellisense",
+                "formulahendry.auto-rename-tag",
+                "naumovs.color-highlight",
+                "solnurkarim.html-to-css-autocompletion",
+                "Zignd.html-css-class-completion",
+                "antfu.file-nesting"
             ],
             "settings": {
 				"terminal.integrated.defaultProfile.linux": "bash",
