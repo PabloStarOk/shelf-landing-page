@@ -1,8 +1,136 @@
 ---
+import CardFeature from "@/components/ui/cardFeature.astro";
+import Arrow from "@/icons/Arrow.astro";
+import ImageBox from "@/images/feature/Box.webp";
+import ImageChat from "@/images/feature/Chat.webp";
+import ImageSearching from "@/images/feature/Searching.webp";
+import ImageTech from "@/images/feature/Tech.webp";
+import ImageTruck from "@/images/feature/Truck.webp";
 import LayoutSection from "@/layouts/LayoutSection.astro";
 ---
+<script>
+    const features = Array.from(document.querySelectorAll('[id^="featureNumber"]'));
+    const totalFeatures = features.length;
+    let currentIndex = 0;
+
+    const styles = {
+        active: {
+            top: '0',
+            left: 'calc(50% - 200px)',
+            zIndex: '5',
+            scale: '1',
+            filter: 'blur(0px)',
+            opacity: '1'
+        },
+        next: {
+            top: '0',
+            left: 'calc(100% - 400px)',
+            zIndex: '3',
+            scale: '0.8',
+            filter: 'blur(5px)',
+            opacity: '0.6'
+        },
+        prev: {
+            top: '0',
+            left: '0',
+            zIndex: '3',
+            scale: '0.8',
+            filter: 'blur(5px)',
+            opacity: '0.6'
+        },
+        hidden: {
+            opacity: '0',
+            zIndex: '1'
+        }
+    };
+
+    function updateFeatures() {
+        features.forEach((feature, index) => {
+            const position = (index - currentIndex + totalFeatures) % totalFeatures;
+            if (position === 0) {
+                Object.assign(feature.style, styles.active);
+            } else if (position === 1) {
+                Object.assign(feature.style, styles.next);
+            } else if (position === totalFeatures - 1) {
+                Object.assign(feature.style, styles.prev);
+            } else {
+                Object.assign(feature.style, styles.hidden);
+            }
+        });
+    }
+    updateFeatures();
+
+    function moveFeaturesNext() {
+        currentIndex = (currentIndex + 1) % totalFeatures;
+        updateFeatures();
+    }
+
+    function moveFeaturesBack() {
+        currentIndex = (currentIndex - 1 + totalFeatures) % totalFeatures;
+        updateFeatures();
+    }
+
+    const buttonBack = document.getElementById('buttonBack');
+    buttonBack.addEventListener('click', moveFeaturesBack);
+
+    const buttonNext = document.getElementById('buttonNext');
+    buttonNext.addEventListener('click', moveFeaturesNext);
+</script>
+
 
 <LayoutSection title="feature">
-    <h1 class="text-2xl text-text-default-neutral">Feature</h1>
-    <p>Feature</p>
+    <div class="mt-[60px] w-full text-center">
+        <h1 class="text-5xl text-text-default-neutral font-bold">Característica</h1>
+        <p class="text-xl text-text-default-neutral font-normal mt-1">Características del software</p>
+    </div>
+    <div class="w-full h-[600px] flex flex-row justify-between items-center mt-[130px] mb-56 gap-[25px]">
+        <button id="buttonBack" class="p-[30px] bg-background-default-primary rounded-full" type="button">
+            <Arrow />
+        </button>
+        <div class="contentImgsGlobal" id="kola">
+            <CardFeature
+                id="featureNumber1"
+                title="Gestión de Inventarios Inteligente"
+                description="Optimiza la administración de tu inventario con etiquetas personalizadas para una búsqueda rápida y precisa. Cada producto puede tener campos adaptados a tus necesidades específicas, ofreciendo una gestión completamente flexible."
+                image={ImageBox}  />
+            <CardFeature
+                id="featureNumber2"
+                title="Gestión Integral de Proveedores"
+                description="Compara precios entre proveedores fácilmente y monitoriza qué productos están vinculados a cada uno. Simplifica tus compras y mantén un control total sobre tus relaciones comerciales."
+                image={ImageTruck}  />
+            <CardFeature
+                id="featureNumber3"
+                title="Interoperabilidad con Addons"
+                description="Amplía las capacidades de tu software con nuestra librería de complementos. Conecta otras herramientas como Siigo para potenciar tu flujo de trabajo y disfrutar de una experiencia integrada."
+                image={ImageTech}  />
+            <CardFeature
+                id="featureNumber4"
+                title="Panel de Control Avanzado"
+                description="Obtén información clave en tiempo real. Visualiza los productos más vendidos, los inventarios con mayor movimiento y las tendencias de los clientes relacionadas con tus productos, todo desde un solo lugar."
+                image={ImageSearching}  />
+            <CardFeature
+                id="featureNumber5"
+                title="Alertas Personalizadas"
+                description="Configura notificaciones para productos próximos a vencer o con niveles de inventario bajos. Anticípate a los problemas y toma decisiones estratégicas en el momento adecuado."
+                image={ImageChat}  />
+        </div>
+        <button id="buttonNext" class="p-[30px] bg-background-default-primary rounded-full rotate-180" type="button">
+            <Arrow />
+        </button>
+    </div>
 </LayoutSection>
+
+<style>
+    .contentImgsGlobal{
+        position: relative;
+
+        width: 100%;
+        height: 100%;
+    }
+
+    [id^="feature"] {
+        position: absolute;
+        transition: all 0.5s ease;
+    }
+
+</style>
