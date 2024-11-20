@@ -3,6 +3,8 @@ import LayoutSection from "@/layouts/LayoutSection.astro";
 ---
 
 <LayoutSection title="valueProposal">
+    <div class="local-card">Este es el código local</div>
+
     <h1>Lo que nos hace diferentes</h1>
     <div class="content1">
         <!-- Card 1 -->
@@ -145,11 +147,17 @@ import LayoutSection from "@/layouts/LayoutSection.astro";
         gap: 20px;
         color: #fff;
         background-color: #e3e3e318;
+        box-shadow: 0px 10px 14px 0px #00000061;
     }
 
     .titel {
         font-size: 14px;
         font-weight: 900;
+    }
+
+    .front p {
+        font-size: 10px;
+        margin-top: 0px !important;
     }
     svg {
         margin-top: 25px;
