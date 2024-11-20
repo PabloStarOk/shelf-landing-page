@@ -1,7 +1,22 @@
 ---
+import ContactForm from "@/components/ui/ContactForm.astro";
 import LayoutSection from "@/layouts/LayoutSection.astro";
 ---
+
 <LayoutSection title='contact'>
-    <h1 class="text-2xl text-text-default-neutral">Contact</h1>
-    <p>Send me an email at</p>
+    <div class="container">
+        <ContactForm/>
+    </div>
 </LayoutSection>
+
+<style>
+    .container {
+        display: flex;
+        flow-direction: row;
+        gap: 180px;
+        justify-content: center;
+        align-items: center;
+        align-self: stretch;
+        height: auto;
+    }
+</style>
