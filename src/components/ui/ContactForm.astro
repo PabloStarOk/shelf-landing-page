@@ -6,6 +6,7 @@ import PhoneInput from "./PhoneInput.astro";
     const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const phoneCodeRegex = /^[0-9]{1,3}$/;
     const phoneNumberRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    const maxLengthRegex = /^.{0,400}$/;
 
     const errorMessages = {
         nameEmpty: "El nombre es requerido.",
@@ -15,6 +16,7 @@ import PhoneInput from "./PhoneInput.astro";
         phoneCodeInvalid: "El código de teléfono es invalido.",
         phoneNumberEmpty: "El teléfono no puede estar vacío.",
         phoneNumberInvalid: "El teléfono no es válido.",
+        messageMaxLength: "Longitud máxima de 400 caracteres."
     };
 
     const validateField = (
@@ -28,30 +30,22 @@ import PhoneInput from "./PhoneInput.astro";
         return ""; // No errors
     }
 
-    const sendData = async (
-        data: {
-            name: string,
-            email: string,
-            phoneCode: string,
-            phoneNumber: string,
-            message: string}): Promise<void> => {
+    const sendData = async (formData: FormData): Promise<void> => {
         try {
-            const response = await fetch(import.meta.env.PUBLIC_TEMP_URL, { // TODO: Use serverless function.
-                mode: 'no-cors',
+            const response = await fetch("/api/contact", {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
+                body: formData
             });
 
-            if (response) { // TODO: Use a custom dialog for sending and sent status.
+            if (response.ok) { // TODO: Provide a custom dialog.
                 alert("El formulario fue enviado con éxito.");
                 form.reset();
+            } else {
+                alert("El formulario no pudo ser enviado.");
             }
         }
         catch (err) {
-            alert("Hubo un problema enviando el formulario."); // TODO: Provide a custom dialog.
+            alert("Ocurrio un problema enviando el formulario, por favor intentelo de nuevo."); // TODO: Provide a custom dialog.
         }
     }
 
@@ -72,7 +66,7 @@ import PhoneInput from "./PhoneInput.astro";
                 errorElement: document.querySelector("#name-error") as HTMLParagraphElement,
             },
             {
-                value: formData.get("email")?.toString() ?? "",
+                value: formData.get("email")?.toString() ?? "", // TODO: Verify if the email was already sent.
                 regex: emailRegex,
                 emptyMessage: errorMessages.emailEmpty,
                 invalidMessage: errorMessages.emailInvalid,
@@ -92,10 +86,17 @@ import PhoneInput from "./PhoneInput.astro";
                 invalidMessage: errorMessages.phoneNumberInvalid,
                 errorElement: document.querySelector("#phone-number-error") as HTMLParagraphElement,
             },
+            {
+                value: formData.get("message")?.toString() ?? "",
+                regex: maxLengthRegex,
+                emptyMessage: "",
+                invalidMessage: errorMessages.messageMaxLength,
+                errorElement: document.querySelector("#message-error") as HTMLParagraphElement
+            }
         ];
 
         let isValid: boolean = true;
-        validationMap.forEach(({ value, regex, emptyMessage, invalidMessage, errorElement }) => {
+        validationMap.forEach(({ value, regex, emptyMessage, invalidMessage, errorElement, }) => {
             const errorMessage = validateField(value, regex, emptyMessage, invalidMessage);
             if (errorMessage) isValid = false;
 
@@ -120,13 +121,7 @@ import PhoneInput from "./PhoneInput.astro";
         if (!isValid)
             return;
 
-        await sendData({
-            name: validationMap[0].value,
-            email: validationMap[1].value,
-            phoneCode: validationMap[2].value,
-            phoneNumber: validationMap[3].value,
-            message: formData.get("message")?.toString() ?? "",
-        });
+        await sendData(formData);
     });
 </script>
 
@@ -159,7 +154,10 @@ import PhoneInput from "./PhoneInput.astro";
 
             <div class="label-input-container">
                 <label for="message">Mensaje</label>
-                <textarea id="message" name="message" placeholder="Mensaje"></textarea>
+                <div class="input-error-container"></div>
+                    <textarea id="message" name="message" placeholder="Mensaje"></textarea>
+                    <p id="message-error" class="error"></p>
+                </div>
             </div>
             <button type="submit">Enviar</button>
 </form>
