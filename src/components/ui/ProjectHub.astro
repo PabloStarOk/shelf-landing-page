@@ -1,0 +1,88 @@
+---
+import FigmaIcon from "@/icons/Figma.astro";
+import GithubIcon from "@/icons/Github.astro";
+import OpenInNew from "@/icons/OpenInNew.astro";
+---
+
+<div>
+    <a href="https://github.com/PabloStarOk/shelf-landing-page"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Open GitHub repository in a new tab"
+    class="website github"
+    title="Open GitHub Repository">
+            <GithubIcon/>
+            <p>Github</p>
+            <OpenInNew />
+    </a>
+    <a href="https://www.figma.com/proto/7rtMxn8vtnQcU1xERYNl77/Shelf---Prototipo?node-id=782-1127&node-type=frame&t=9S41RsnqmlTrO6vO-1&scaling=scale-down&content-scaling=fixed&page-id=106%3A583"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Open Figma prototype in a new tab"
+    class="website figma"
+    title="Open Figma Prototype" >
+            <FigmaIcon/>
+            <p>Figma</p>
+            <OpenInNew />
+    </a>
+</div>
+
+<style>
+    div {
+        /* Layout */
+        display: flex;
+        align-items: center;
+        gap: 2.5rem;
+        align-self: stretch;
+    }
+
+    .website {
+        /* Layout */
+        display: flex;
+        width: 14.375rem;
+        min-width: 14.375rem;
+        min-height: 4.6875rem;
+        max-height: 4.6875rem;
+        padding: 0.75rem 1rem;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+
+        /* Style */
+        border-radius: 0.25rem;
+        box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.25);
+
+        /* Typography */
+        color: #FFF;
+        font-size: 1.25rem;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 120%;
+        letter-spacing: -0.025rem;
+
+        /* Animations */
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, outline 0.1s ease-in-out;
+    }
+
+    .website:hover, .website:focus {
+        /* Style */
+        transform: scale(1.1);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
+    }
+
+    .website:focus {
+        /* Style */
+        outline: 3px solid #1E90FF;
+        outline-offset: 4px;
+    }
+
+    .website.github {
+        /* Style */
+        background: linear-gradient(135deg, #000 0%, #242938 100%);
+    }
+
+    .website.figma {
+        /* Style */
+        background: linear-gradient(135deg, #000 0%, #F24E1E 100%);
+    }
+</style>
