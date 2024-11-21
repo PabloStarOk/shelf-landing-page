@@ -1,0 +1,67 @@
+<!--TODO: Use a package or stylize phone number as it is in figma.-->
+<div>
+    <input id="phone-code" name="phone-code" inputmode="numeric" placeholder="+57" min="1" max="999" autocomplete="tel-country-code" list="countrycodes" value="57" required>
+    <input type="tel" id="phone-number" name="phone-number" inputmode="numeric" placeholder="Teléfono" autocomplete="tel" required>
+
+    <datalist id="countrycodes">
+        <option value="+57">Colombia</option>
+    </datalist>
+</div>
+
+<style>
+    div {
+        /* Layout */
+        display: flex;
+        align-items: center;
+        gap: 0.3125rem;
+        align-self: stretch;
+    }
+
+    input {
+        /* Layout */
+        min-width: 3.125rem;
+        padding: 1rem 0.75rem 0.75rem 0.75rem;
+
+        /* Style */
+        outline: none;
+        border-radius: 0.25rem;
+        border: 0.063rem solid #B3B3B3;
+        background: #FFF;
+
+        /* Typography */
+        color: #1E1E1E;
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 120%;
+        letter-spacing: -0.02rem;
+
+        /* Animations */
+        transition: transform 0.2s ease;
+    }
+
+    input:focus {
+        /* Style */
+        border-color: #004080;
+        box-shadow: 0 0 8px rgba(0, 64, 128, 0.5);
+        transform: scale(1.02);
+    }
+
+     input::placeholder {
+        /* Typography */
+        color: #B3B3B3;
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 120%;
+        letter-spacing: -0.02rem;
+    }
+
+    input#phone-code {
+        max-width: 5rem;
+    }
+
+    input#phone-number {
+        align-self: stretch;
+    }
+</style>

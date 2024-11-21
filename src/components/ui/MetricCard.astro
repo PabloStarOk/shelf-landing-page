@@ -1,0 +1,73 @@
+---
+type Props = {
+    id: string,
+    title: string,
+    amount: number
+}
+
+const { id, title, amount } = Astro.props;
+---
+
+<article id={id} class="metric" aria-labelledby={`${id}-title`} aria-describedby={`${id}-amount`} tabindex="0">
+    <p id={`${id}-amount`} class="metric-amount">{amount}</p>
+    <p id={`${id}-title`} class="metric-title">{title}</p>
+</article>
+
+<style>
+    .metric {
+        /* Layout */
+        display: flex;
+        height: auto;
+        min-height: 9.375rem;
+        padding: 0.5rem;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        align-self: stretch;
+        width: 100%;
+
+        /* Style */
+        border-radius: 0.25rem;
+        border: 1px solid #949494;
+        background: #FFF;
+        box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.25);
+
+        /* Animations */
+        transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out, outline 0.1s ease-in-out;
+    }
+
+    .metric:hover, .metric:focus {
+        /* Style */
+        transform: scale(1.1);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
+    }
+
+    .metric:focus {
+        /* Style */
+        outline: 3px solid #1E90FF;
+        outline-offset: 4px;
+    }
+
+    .metric-amount {
+        /* Typography */
+        color: #1E1E1E;
+        text-align: center;
+        font-size: 2rem;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 120%;
+        letter-spacing: -0.04rem;
+    }
+
+    .metric-title {
+        /* Typography */
+        color: #1E1E1E;
+        text-align: center;
+        font-size: 1.25rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 120%;
+        letter-spacing: -0.025rem;
+    }
+</style>

@@ -1,0 +1,369 @@
+---
+import PhoneInput from "./PhoneInput.astro";
+---
+
+<script>
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const phoneCodeRegex = /^[0-9]{1,3}$/;
+    const phoneNumberRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+
+    const errorMessages = {
+        nameEmpty: "El nombre es requerido.",
+        emailEmpty: "El email no puede estar vacío.",
+        emailInvalid: "El email no es válido.",
+        phoneCodeEmpty: "El código de teléfono no puede estar vacío.",
+        phoneCodeInvalid: "El código de teléfono es invalido.",
+        phoneNumberEmpty: "El teléfono no puede estar vacío.",
+        phoneNumberInvalid: "El teléfono no es válido.",
+    };
+
+    const validateField = (
+        value: string,
+        regex: RegExp | null,
+        emptyMessage: string,
+        invalidMessage: string
+    ): string => {
+        if (value === "") return emptyMessage;
+        else if (regex && !regex.test(value)) return invalidMessage;
+        return ""; // No errors
+    }
+
+    const sendData = async (
+        data: {
+            name: string,
+            email: string,
+            phoneCode: string,
+            phoneNumber: string,
+            message: string}): Promise<void> => {
+        try {
+            const response = await fetch(import.meta.env.PUBLIC_TEMP_URL, { // TODO: Use serverless function.
+                mode: 'no-cors',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response) { // TODO: Use a custom dialog for sending and sent status.
+                alert("El formulario fue enviado con éxito.");
+                form.reset();
+            }
+        }
+        catch (err) {
+            alert("Hubo un problema enviando el formulario."); // TODO: Provide a custom dialog.
+        }
+    }
+
+    const form: HTMLFormElement = document.querySelector("#contact-form") as HTMLFormElement;
+    if (!form)
+        throw new Error("Form not found"); // TODO: Provide custom error to the user.
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        const validationMap = [
+            {
+                value: formData.get("name")?.toString() ?? "",
+                regex: null,
+                emptyMessage: errorMessages.nameEmpty,
+                invalidMessage: "",
+                errorElement: document.querySelector("#name-error") as HTMLParagraphElement,
+            },
+            {
+                value: formData.get("email")?.toString() ?? "",
+                regex: emailRegex,
+                emptyMessage: errorMessages.emailEmpty,
+                invalidMessage: errorMessages.emailInvalid,
+                errorElement: document.querySelector("#email-error") as HTMLParagraphElement,
+            },
+            {
+                value: formData.get("phone-code")?.toString() ?? "",
+                regex: phoneCodeRegex,
+                emptyMessage: errorMessages.phoneCodeEmpty,
+                invalidMessage: errorMessages.phoneCodeInvalid,
+                errorElement: document.querySelector("#phone-code-error") as HTMLParagraphElement,
+            },
+            {
+                value: formData.get("phone-number")?.toString() ?? "",
+                regex: phoneNumberRegex,
+                emptyMessage: errorMessages.phoneNumberEmpty,
+                invalidMessage: errorMessages.phoneNumberInvalid,
+                errorElement: document.querySelector("#phone-number-error") as HTMLParagraphElement,
+            },
+        ];
+
+        let isValid: boolean = true;
+        validationMap.forEach(({ value, regex, emptyMessage, invalidMessage, errorElement }) => {
+            const errorMessage = validateField(value, regex, emptyMessage, invalidMessage);
+            if (errorMessage) isValid = false;
+
+            if (errorElement.id == "phone-number-error") // TODO: Messy conditional, should both errors be displayed?
+            {
+                errorElement.hidden = errorMessage ? false : true;
+                validationMap[2].errorElement.hidden = !errorElement.hidden;
+                errorElement.textContent = errorMessage;
+                if (!errorElement.hidden)
+                    errorElement.classList.add("show");
+                return;
+            }
+
+            if (errorMessage)
+                errorElement.classList.add("show");
+            else
+                errorElement.classList.remove("show");
+
+            errorElement.textContent = errorMessage;
+        });
+
+        if (!isValid)
+            return;
+
+        await sendData({
+            name: validationMap[0].value,
+            email: validationMap[1].value,
+            phoneCode: validationMap[2].value,
+            phoneNumber: validationMap[3].value,
+            message: formData.get("message")?.toString() ?? "",
+        });
+    });
+</script>
+
+<form id="contact-form" novalidate>
+    <h2>Contáctanos</h2>
+            <div class="label-input-container">
+                <label for="name">Nombres <span class="text-red-700">*</span></label>
+                <div class="input-error-container">
+                    <input type="text" id="name" name="name" placeholder="Nombres" autocomplete="name" required>
+                    <p id="name-error" class="error"></p>
+                </div>
+            </div>
+
+            <div class="label-input-container">
+                <label for="email">Email<span class="text-red-700">*</span></label>
+                <div class="input-error-container">
+                    <input type="email" id="email" name="email" placeholder="email@email.com" autocomplete="email" required>
+                    <p id="email-error" class="error"></p>
+                </div>
+            </div>
+
+            <div class="label-input-container">
+                <label for="phone-number">Teléfono<span class="text-red-700">*</span></label>
+                <div class="input-error-container">
+                    <PhoneInput/>
+                    <p id="phone-code-error" class="error" hidden></p>
+                    <p id="phone-number-error" class="error"></p>
+                </div>
+            </div>
+
+            <div class="label-input-container">
+                <label for="message">Mensaje</label>
+                <textarea id="message" name="message" placeholder="Mensaje"></textarea>
+            </div>
+            <button type="submit">Enviar</button>
+</form>
+
+<style>
+    form {
+        /* Layout */
+        display: flex;
+        width: 24.375rem;
+        padding: 2.375rem 1.75rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.9375rem;
+
+        /* Style */
+        border-radius: 0.25rem;
+        border: 0.06rem solid #B3B3B3;
+        background: #FFF;
+        box-shadow: 0px 0px 10px -8px rgba(0, 0, 0, 0.25);
+    }
+
+    h2 {
+        /* Typography */
+        color: #004080;
+        font-size: 2rem;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 120%;
+        letter-spacing: -0.04rem;
+    }
+
+    button {
+        /* Layout */
+        height: 2.8125rem;
+        min-height: 2.8125rem;
+        width: 100%;
+        padding: 0.75rem;
+        gap: 0.5rem;
+
+        /* Style */
+        border-radius: 0.25rem;
+        background:#004080;
+
+        /* Typography */
+        color: #FFF;
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 120%;
+        letter-spacing: -0.02rem;
+
+         /* Animations */
+        transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    }
+
+    button:hover {
+        /* Style */
+        background: #134B83;
+        transform: scale(1.02);
+    }
+
+    button:active {
+        /* Style */
+        background: #003366;
+        transform: scale(0.95);
+
+        /* Animations */
+        animation: bounce-back 0.2s ease-out;
+    }
+
+    @keyframes bounce-back {
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    label {
+        /* Typography */
+        color: #1E1E1E;
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 120%;
+        letter-spacing: -0.02rem;
+    }
+
+    input {
+        /* Layout */
+        padding: 0.75rem 0.75rem 0.75rem 1rem;
+
+        /* Style */
+        outline: none;
+        border-radius: 0.25rem;
+        border: 0.06rem solid #B3B3B3;
+        background:#FFF;
+
+        /* Typography */
+        color: #1E1E1E;
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 120%;
+        letter-spacing: -0.02rem;
+
+        /* Animations */
+        transition: transform 0.2s ease;
+    }
+
+    input:focus {
+        /* Style */
+        border-color: #004080;
+        box-shadow: 0 0 8px rgba(0, 64, 128, 0.5);
+        transform: scale(1.02);
+    }
+
+    input::placeholder {
+        /* Typography */
+        color: #B3B3B3;
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 120%;
+        letter-spacing: -0.02rem;
+    }
+
+    textarea {
+        /* Layout */
+        padding: 0.75rem 0.75rem 0.75rem 1rem;
+        min-height: 9.375rem;
+        max-height: 20rem;
+
+        /* Style */
+        outline: none;
+        border-radius: 0.25rem;
+        border: 0.06rem solid #B3B3B3;
+        background:#FFF;
+
+        /* Typography */
+        color: #1E1E1E;
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 120%;
+        letter-spacing: -0.02rem;
+
+        /* Animations */
+        transition: transform 0.2s ease;
+    }
+
+    textarea:focus {
+        /* Style */
+        border-color: #004080;
+        box-shadow: 0 0 8px rgba(0, 64, 128, 0.5);
+        transform: scale(1.02);
+    }
+
+    textarea::placeholder {
+        /* Typography */
+        color: #B3B3B3;
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 120%;
+        letter-spacing: -0.02rem;
+    }
+
+    .label-input-container {
+        /* Layout */
+        display: flex;
+        padding: 0rem;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-self: stretch;
+        width: 100%;
+    }
+
+    .input-error-container {
+        /* Layout */
+        display: flex;
+        flex-direction: column;
+        gap: 0rem;
+    }
+
+    .error {
+        /* Layout */
+        min-height: 1.5rem;
+
+        /* Typography */
+        color: #C00F0C;
+        font-size: 0.875rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 120%;
+        letter-spacing: -0.0175rem;
+
+        /* Animation */
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .error.show {
+        opacity: 1;
+    }
+</style>
