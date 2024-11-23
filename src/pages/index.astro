@@ -5,11 +5,16 @@ import Footer from '@/components/Footer.astro';
 import Menu from '@/components/Menu.astro';
 import Principal from '@/components/Principal.astro';
 import Prototype from '@/components/Prototype.astro';
+import Rect from '@/components/ui/Rect.astro';
 import ValueProposal from '@/components/ValueProposal.astro';
 import Layout from '@/layouts/Layout.astro';
 ---
 
 <Layout title="Landing Page Shelf">
+    <Rect color="blue" size="big" positionLeft="-20px" positionTop='150%' />
+    <Rect color="green" size="big" positionLeft='84%' positionTop='234%' />
+    <Rect color="blue" size="big" positionLeft='-100px' positionTop='354%' />
+    <Rect color="blue" size="small" positionLeft='90%' positionTop='470%' />
 	<Menu />
 	<main class="mt-[130px] mx-[48px] flex flex-col gap-6">
 		<Principal />

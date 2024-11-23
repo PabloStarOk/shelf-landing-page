@@ -1,0 +1,51 @@
+---
+type Props = {
+    size: "big" | "small";
+    color: "green" | "blue";
+    positionLeft: string;
+    positionTop: string;
+    positionRight: string;
+}
+
+const { color, size, positionLeft, positionRight, positionTop } = Astro.props;
+
+const sizeValue = size === "big" ? "31.25rem" : "21.32606rem";
+const backgroundColor = color === "green" ? "#388A80" : "#004080";
+
+---
+<div class="rectGeneral"></div>
+
+<style define:vars={{ sizeValue, backgroundColor, positionLeft, positionRight, positionTop }}>
+    .rectGeneral {
+        transform: rotate(-45deg);
+        flex-shrink: 0;
+        border-radius: 2.5rem;
+        width: var(--sizeValue);
+        height: var(--sizeValue);
+        background: var(--backgroundColor);
+
+        position: absolute;
+        z-index: -1;
+        top: var(--positionTop, 0);
+        left: var(--positionLeft, 0);
+        right: var(--positionRight, 0);
+    }
+    /* .rectSizeBig {
+        width: 31.25rem;
+        height: 31.25rem;
+    }
+
+    .rectSizeSmall{
+        width: 21.32606rem;
+        height: 21.32606rem;
+    }
+
+    .rectGreen{
+        background: #388A80;
+    }
+
+    .rectBlue{
+        background: #004080;
+    }
+    */
+</style>
