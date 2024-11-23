@@ -5,29 +5,53 @@ import ProjectHub from "@/components/ui/ProjectHub.astro";
 import LayoutSection from "@/layouts/LayoutSection.astro";
 ---
 
-<LayoutSection title='contact'>
-    <div class="container">
-        <ContactForm aria-labelledby="contact-form"/>
-        <section class="subcontainer" role="region" aria-labelledby="metrics-section">
-            <ProjectHub aria-labelledby="project-hub"/>
-            <MetricCard id="metric-visits" title="Visitas" amount={0}/>
-            <MetricCard id="metric-forms-sent" title="Formularios Envíados" amount={0}/>
-            <MetricCard id="metric-interactions" title="Interacciones con el botón de acción" amount={0}/>
-        </section>
+<LayoutSection title='contact' height={1117}>
+    <div class="wrapper">
+        <h1>Contacto & Información</h1>
+        <div class="content">
+            <ContactForm aria-labelledby="contact-form"/>
+            <section class="info" role="region" aria-labelledby="metrics-section">
+                <ProjectHub aria-labelledby="project-hub"/>
+                <MetricCard id="metric-visits" title="Visitas" amount={0}/>
+                <MetricCard id="metric-forms-sent" title="Formularios Envíados" amount={0}/>
+                <MetricCard id="metric-interactions" title="Interacciones con el botón de acción" amount={0}/>
+            </section>
+        </div>
     </div>
 </LayoutSection>
 
 <style>
-    .container {
+    h1 {
+        /* Typography */
+        color: #FFF;
+        font-size: 3rem;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 120%;
+        letter-spacing: -0.06rem;
+        text-align: center;
+    }
+
+    .wrapper {
+        /* Layout */
         display: flex;
-        flow-direction: column;
-        gap: 10rem;
-        justify-content: center;
+        width: 100%;
+        padding: 1.5rem 6rem;
+        gap: 4rem;
+        flex-direction: column;
+        justify-content: space-evenly;
+    }
+
+    .content {
+        display: flex;
+        flow-direction: row;
+        gap: 2rem;
+        justify-content: space-evenly;
         align-items: center;
         align-self: stretch;
     }
 
-    .subcontainer {
+    .info {
         /* Layout */
         display: flex;
         width: 100%;
