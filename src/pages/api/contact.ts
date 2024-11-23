@@ -10,9 +10,12 @@ const validateForm = (formData: FormData): boolean => {
 
     const validateField = (
         value: string,
-        regex: RegExp | null
+        regex: RegExp | null,
+        isOptional: boolean
     ): boolean => {
-        if (!value || (regex && !regex.test(value))) return false;
+        if ((!value && !isOptional) || (regex && !regex.test(value))) {
+            return false;
+        }
         return true; // No errors
     }
 
@@ -20,26 +23,31 @@ const validateForm = (formData: FormData): boolean => {
         {
             value: formData.get("name")?.toString() ?? "",
             regex: null,
+            isOptional: false
         },
         {
             value: formData.get("email")?.toString() ?? "",
-            regex: emailRegex
+            regex: emailRegex,
+            isOptional: false
         },
         {
             value: formData.get("phone-code")?.toString() ?? "",
-            regex: phoneCodeRegex
+            regex: phoneCodeRegex,
+            isOptional: false
         },
         {
             value: formData.get("phone-number")?.toString() ?? "",
-            regex: phoneNumberRegex
+            regex: phoneNumberRegex,
+            isOptional: false
         },
         {
             value: formData.get("message")?.toString() ?? "",
-            regex: maxLengthRegex
+            regex: maxLengthRegex,
+            isOptional: true
         }
     ];
 
-    return validationMap.every(({ value, regex }) => validateField(value, regex));
+    return validationMap.every(({ value, regex, isOptional }) => validateField(value, regex, isOptional));
 }
 
 const createResponse = (message: string, statusCode: number): Response => {
@@ -63,7 +71,7 @@ export const POST: APIRoute = async ({ request }): Promise<Response> => {
             email: formData.get("email")?.toString() ?? "",
             phone_code: formData.get("phone-code") as number | null,
             phone_number: formData.get("phone-number") as number | null,
-            message: formData.get("message")?.toString() ?? "" // BUG: When user doesn't provide a message.
+            message: formData.get("message")?.toString() ?? ""
         }
 
         const { error } = await supabase.schema(dbInfo.schema).from(dbInfo.formsTable).insert(data);
