@@ -1,0 +1,19 @@
+<svg id="error-icon" class="error-icon" width="24" height="24" viewBox="0 0 24 24">
+    <path fill="#DC2626" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+</svg>
+
+<style>
+    .error-icon {
+        width: 3rem;
+        height: 3rem;
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    .error-icon.show {
+        width: 3rem;
+        height: 3rem;
+        opacity: 1;
+        animation: checkmark 0.5s ease-out forwards;
+    }
+</style>

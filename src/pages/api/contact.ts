@@ -63,7 +63,7 @@ export const POST: APIRoute = async ({ request }): Promise<Response> => {
             email: formData.get("email")?.toString() ?? "",
             phone_code: formData.get("phone-code") as number | null,
             phone_number: formData.get("phone-number") as number | null,
-            message: formData.get("message")?.toString() ?? ""
+            message: formData.get("message")?.toString() ?? "" // BUG: When user doesn't provide a message.
         }
 
         const { error } = await supabase.schema(dbInfo.schema).from(dbInfo.formsTable).insert(data);
