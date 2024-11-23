@@ -1,11 +1,12 @@
 ---
 type Props = {
     title: string;
+    height: "450px" | "1117" | "843";
 }
 
-const { title } = Astro.props;
+const { title, height } = Astro.props;
 ---
 
-<section id={title} class="bg-[rgba(13,26,38,0.25)] p-[30px] rounded-[8px] min-h-[450px]">
+<section id={title} class={`bg-[rgba(13,26,38,0.25)] p-[30px] rounded-[8px] min-h-[${height}px]`}>
     <slot />
 </section>
