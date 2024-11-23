@@ -1,8 +1,122 @@
 ---
+import IconApp from "@/icons/IconApp.astro";
+import Banner from "@/images/principal/banner.webp";
 import LayoutSection from "@/layouts/LayoutSection.astro";
+import { Image } from "astro:assets";
 ---
 
-<LayoutSection title="principal">
-    <h1 class="text-2xl text-text-default-neutral">Principal</h1>
-    <p>Principal</p>
+<LayoutSection title="principal" height="843">
+    <div class="containerPrincipal">
+        <div class="left">
+            <IconApp />
+            <h1>Shelf</h1>
+            <p>La mejor herramienta para la gestión de tu inventario</p>
+            <a href="#contact">Contactanos</a>
+        </div>
+        <div class="right">
+            <div class="w-auto h-auto">
+                <Image class="image" src={Banner} alt="Imagen del banner">
+            </div>
+            <p class="textPrincipal">¿Tu negocio enfrenta dificultades para gestionar el inventario? Perder tiempo rastreando productos, desorganización y falta de control pueden afectar tus resultados. Shelf está aquí para cambiar eso.</p>
+        </div>
+    </div>
 </LayoutSection>
+
+<style>
+    .containerPrincipal{
+        height: 100%;
+
+        display: flex;
+        flex-direction: row;
+        align-items: start;
+        gap: 2.5rem;
+    }
+
+    .right{
+        height: 100%;
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+
+        & > div > .image {
+            width: 53.25rem;
+            height: 25.625rem;
+            flex-shrink: 0;
+        }
+
+    }
+
+    .textPrincipal{
+        width: 51.125rem;
+        color: #FFF;
+        text-align: center;
+        font-size: 2rem;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 120%;
+        letter-spacing: -0.04rem;
+    }
+
+    .left{
+        height: 100%;
+        width: 34.6875rem;
+        padding: 2rem;
+        border-radius: 0.25rem;
+        background-color: #EDF2F4;
+
+        & > h1 {
+            color: #004080;
+            text-align: center;
+            font-size: 4.5rem;
+            text-align: start;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 120%;
+            letter-spacing: -0.135rem;
+
+            margin-top: 2rem;
+        }
+
+        & > p {
+            color: #004080;
+            text-align: center;
+            font-size: 1.1rem;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 120%;
+            letter-spacing: -0.03rem;
+
+            text-align: start;
+        }
+
+        & > a {
+            display: inline-flex;
+            height: 3.125rem;
+            min-width: 5.625rem;
+            min-height: 3.125rem;
+            padding: 1rem 1.5rem;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+            border-radius: 0.25rem;
+            background: #004080;
+            color: #FFF;
+
+            text-align: center;
+            font-size: 1.25rem;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 120%;
+            letter-spacing: -0.025rem;
+            margin-top: 2.31rem;
+
+            &:hover {
+                background: #003366;
+            }
+        }
+    }
+</style>
