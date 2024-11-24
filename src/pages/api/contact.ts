@@ -10,6 +10,20 @@ type UserForm = {
     message: string;
 }
 
+type ValidationPatterns = {
+    email: RegExp;
+    phoneCode: RegExp;
+    phoneNumber: RegExp;
+    message: RegExp;
+}
+
+const validationPatterns: ValidationPatterns = {
+    email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    phoneCode: /^[0-9]{1,3}$/,
+    phoneNumber: /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,
+    message: /^.{0,400}$/,
+}
+
 const createUserForm = (formData: FormData): UserForm => {
     const data: UserForm = {
         name: formData.get("name")?.toString() ?? "",
@@ -33,11 +47,6 @@ const validateField = (
 }
 
 const validateForm = (formData: FormData): boolean => {
-    const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    const phoneCodeRegex = /^[0-9]{1,3}$/;
-    const phoneNumberRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-    const maxLengthRegex = /^.{0,400}$/;
-
     const userForm = createUserForm(formData);
 
     const validationMap = [
@@ -48,22 +57,22 @@ const validateForm = (formData: FormData): boolean => {
         },
         {
             value: userForm.email,
-            regex: emailRegex,
+            regex: validationPatterns.email,
             isOptional: false
         },
         {
             value: userForm.phone_code.toString(),
-            regex: phoneCodeRegex,
+            regex: validationPatterns.phoneCode,
             isOptional: false
         },
         {
             value: userForm.phone_number.toString(),
-            regex: phoneNumberRegex,
+            regex: validationPatterns.phoneNumber,
             isOptional: false
         },
         {
             value: userForm.message,
-            regex: maxLengthRegex,
+            regex: validationPatterns.message,
             isOptional: true
         }
     ];
