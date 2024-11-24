@@ -91,11 +91,12 @@ import FormStatusModal from "@/components/ui/FormStatusModal.astro";
                 return;
             }
 
-            if (errorMessage)
-                errorElement.classList.add("show");
-            else
+            if (!errorMessage) {
                 errorElement.classList.remove("show");
+                return;
+            }
 
+            errorElement.classList.add("show");
             errorElement.textContent = errorMessage;
         });
 
