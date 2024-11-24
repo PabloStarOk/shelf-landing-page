@@ -2,6 +2,25 @@ export const prerender = false;
 import { dbInfo, supabase } from "@/lib/database/supabase";
 import type { APIRoute } from "astro";
 
+type UserForm = {
+    name: string;
+    email: string;
+    phone_code: number;
+    phone_number: number;
+    message: string;
+}
+
+const createUserForm = (formData: FormData): UserForm => {
+    const data: UserForm = {
+        name: formData.get("name")?.toString() ?? "",
+        email: formData.get("email")?.toString() ?? "",
+        phone_code: parseInt(formData.get("phone-code")?.toString() ?? ""),
+        phone_number: parseInt(formData.get("phone-number")?.toString() ?? ""),
+        message: formData.get("message")?.toString() ?? ""
+    }
+    return data;
+}
+
 const validateForm = (formData: FormData): boolean => {
     const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const phoneCodeRegex = /^[0-9]{1,3}$/;
@@ -19,29 +38,31 @@ const validateForm = (formData: FormData): boolean => {
         return true; // No errors
     }
 
+    const userForm = createUserForm(formData);
+
     const validationMap = [
         {
-            value: formData.get("name")?.toString() ?? "",
+            value: userForm.name,
             regex: null,
             isOptional: false
         },
         {
-            value: formData.get("email")?.toString() ?? "",
+            value: userForm.email,
             regex: emailRegex,
             isOptional: false
         },
         {
-            value: formData.get("phone-code")?.toString() ?? "",
+            value: userForm.phone_code.toString(),
             regex: phoneCodeRegex,
             isOptional: false
         },
         {
-            value: formData.get("phone-number")?.toString() ?? "",
+            value: userForm.phone_number.toString(),
             regex: phoneNumberRegex,
             isOptional: false
         },
         {
-            value: formData.get("message")?.toString() ?? "",
+            value: userForm.message,
             regex: maxLengthRegex,
             isOptional: true
         }
@@ -66,15 +87,9 @@ export const POST: APIRoute = async ({ request }): Promise<Response> => {
         if (!validateForm(formData))
             return createResponse("Form data is not valid.", 400);
 
-        const data = {
-            name: formData.get("name")?.toString() ?? "",
-            email: formData.get("email")?.toString() ?? "",
-            phone_code: formData.get("phone-code") as number | null,
-            phone_number: formData.get("phone-number") as number | null,
-            message: formData.get("message")?.toString() ?? ""
-        }
+        const userForm: UserForm = createUserForm(formData);
 
-        const { error } = await supabase.schema(dbInfo.schema).from(dbInfo.formsTable).insert(data);
+        const { error } = await supabase.schema(dbInfo.schema).from(dbInfo.formsTable).insert(userForm);
 
         return !error
             ? createResponse("Form data was saved successfully.", 201)
