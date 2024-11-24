@@ -1,5 +1,5 @@
 export const prerender = false;
-import { dbInfo, supabase } from "@/lib/supabase";
+import { dbInfo, supabase } from "@/lib/database/supabase";
 import type { APIRoute } from "astro";
 
 const validateForm = (formData: FormData): boolean => {
