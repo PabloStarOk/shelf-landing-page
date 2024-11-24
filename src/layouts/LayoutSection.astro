@@ -7,6 +7,6 @@ type Props = {
 const { title, height } = Astro.props;
 ---
 
-<section id={title} class={`bg-[rgba(13,26,38,0.25)] p-[1.875rem] rounded-[8px] ${height === '1117' ? "h-[1117px]" : "h-[843px]"}`}>
+<section id={title} class={`bg-[rgba(13,26,38,0.25)] p-[1.875rem] rounded-[8px] ${height === 1117 ? "h-[1117px]" : "h-[843px]"}`}>
     <slot />
 </section>
