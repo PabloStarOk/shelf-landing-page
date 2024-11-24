@@ -4,167 +4,11 @@ import FormStatusModal from "@/components/ui/FormStatusModal.astro";
 ---
 
 <script>
-    // TODO: Create a TS module for the form validation and submission.
-    // TODO: Create a TS module for the dialog modal.
-
-
-    // ---- Form validation ----
-    const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    const phoneCodeRegex = /^[0-9]{1,3}$/;
-    const phoneNumberRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-    const maxLengthRegex = /^.{0,400}$/;
-
-    const errorMessages = {
-        nameEmpty: "El nombre es requerido.",
-        emailEmpty: "El email no puede estar vacío.",
-        emailInvalid: "El email no es válido.",
-        phoneCodeEmpty: "El código de teléfono no puede estar vacío.",
-        phoneCodeInvalid: "El código de teléfono es invalido.",
-        phoneNumberEmpty: "El teléfono no puede estar vacío.",
-        phoneNumberInvalid: "El teléfono no es válido.",
-        messageMaxLength: "Longitud máxima de 400 caracteres."
-    };
-
-    const validateField = (
-        value: string,
-        regex: RegExp | null,
-        emptyMessage: string,
-        invalidMessage: string
-    ): string => {
-        if (value === "") return emptyMessage;
-        else if (regex && !regex.test(value)) return invalidMessage;
-        return ""; // No errors
-    }
-
-    const validateForm = (formData: FormData): boolean => {
-        // TODO: Should this be a Map and moved outside the event listener, and fill the values inside the listener? (Performance)
-        const validationMap = [
-            {
-                value: formData.get("name")?.toString() ?? "",
-                regex: null,
-                emptyMessage: errorMessages.nameEmpty,
-                invalidMessage: "",
-                errorElement: document.querySelector("#name-error") as HTMLParagraphElement,
-            },
-            {
-                value: formData.get("email")?.toString() ?? "", // TODO: Verify if the email was already sent.
-                regex: emailRegex,
-                emptyMessage: errorMessages.emailEmpty,
-                invalidMessage: errorMessages.emailInvalid,
-                errorElement: document.querySelector("#email-error") as HTMLParagraphElement,
-            },
-            {
-                value: formData.get("phone-code")?.toString() ?? "",
-                regex: phoneCodeRegex,
-                emptyMessage: errorMessages.phoneCodeEmpty,
-                invalidMessage: errorMessages.phoneCodeInvalid,
-                errorElement: document.querySelector("#phone-code-error") as HTMLParagraphElement,
-            },
-            {
-                value: formData.get("phone-number")?.toString() ?? "",
-                regex: phoneNumberRegex,
-                emptyMessage: errorMessages.phoneNumberEmpty,
-                invalidMessage: errorMessages.phoneNumberInvalid,
-                errorElement: document.querySelector("#phone-number-error") as HTMLParagraphElement,
-            },
-            {
-                value: formData.get("message")?.toString() ?? "",
-                regex: maxLengthRegex,
-                emptyMessage: "",
-                invalidMessage: errorMessages.messageMaxLength,
-                errorElement: document.querySelector("#message-error") as HTMLParagraphElement
-            }
-        ];
-
-        let isValid: boolean = true;
-        validationMap.forEach(({ value, regex, emptyMessage, invalidMessage, errorElement, }) => {
-            const errorMessage = validateField(value, regex, emptyMessage, invalidMessage);
-            if (errorMessage) isValid = false;
-
-            if (errorElement.id == "phone-number-error") // TODO: Messy conditional, should both errors be displayed?
-            {
-                errorElement.hidden = errorMessage ? false : true;
-                validationMap[2].errorElement.hidden = !errorElement.hidden;
-                errorElement.textContent = errorMessage;
-                if (!errorElement.hidden)
-                    errorElement.classList.add("show");
-                return;
-            }
-
-            if (!errorMessage) {
-                errorElement.classList.remove("show");
-                return;
-            }
-
-            errorElement.classList.add("show");
-            errorElement.textContent = errorMessage;
-        });
-
-        return isValid;
-    }
-
+    import { openDialog, showDialogResult } from "@/lib/contact-form/dialogHandler.ts";
+import { validateForm } from "@/lib/validation/validation.ts";
 
     // ---- Dialog Modal ----
-    // TODO: Add aria-live and aria-busy.
-    const dialogModal: HTMLDialogElement = document.querySelector("#dialog") as HTMLDialogElement;
-    const dialogContent: HTMLParagraphElement = document.querySelector("#dialog-content") as HTMLParagraphElement;
-    const dialogCloseButton: HTMLButtonElement = document.querySelector("#dialog-button") as HTMLButtonElement;
-    const checkIconWrapper = document.getElementById('check-icon-wrapper') as HTMLDivElement;
-    const errorIconWrapper = document.getElementById('error-icon-wrapper') as HTMLDivElement;
-    const loadingIcon = document.getElementById('loading-icon') as HTMLDivElement;
-    const checkIcon = document.getElementById('check-icon') as HTMLDivElement;
-    const errorIcon = document.getElementById('error-icon') as HTMLDivElement;
-    const FETCH_TIMEOUT = 120000; // Two minutes.
     let isRequestResolved = false;
-
-    const dialogMessages: Map<string, string> = new Map([
-        ["loading", "Estamos enviando el formulario, por favor espere."],
-        ["success", "Formulario enviado con éxito."],
-        ["error", "Ocurrio un problema enviando el formulario, por favor intentelo de nuevo."],
-        ["timeout", "El tiempo de espera concluyo y no pudo ser enviado el formulario, por favor intentelo de nuevo."]
-    ]);
-
-    function disableEscKey(enable: boolean) {
-        if (enable) {
-            document.addEventListener('keydown', handleKeyDown);
-        } else {
-            document.removeEventListener('keydown', handleKeyDown);
-        }
-    }
-
-    function handleKeyDown(event: HTMLElementEventMap["keydown"]) {
-        if (event.key === 'Escape') event.preventDefault();
-    }
-
-    function openDialog(abortController: AbortController): NodeJS.Timeout {
-        dialogContent.textContent = dialogMessages.get("loading") as string;
-        dialogModal.showModal();
-        document.body.style.overflow = 'hidden';
-        disableEscKey(true);
-        return setTimeout(() => {
-            if (!isRequestResolved)
-                abortController.abort();
-        }, FETCH_TIMEOUT)
-    }
-
-    function showDialogResult(ok: boolean, messageType: string) {
-        loadingIcon?.classList.add('hide');
-        loadingIcon.style.display = 'none';
-
-        if (ok) {
-            checkIconWrapper.hidden = false;
-            checkIcon.classList.add('show');
-        }
-        else {
-            errorIconWrapper.hidden = false;
-            errorIcon.classList.add('show');
-        }
-
-        dialogContent.textContent = dialogMessages.get(messageType) as string;
-        dialogCloseButton.disabled = false;
-        disableEscKey(false);
-    }
-
 
     // ---- Form submission ----
     const form: HTMLFormElement = document.getElementById("contact-form") as HTMLFormElement;
@@ -173,7 +17,7 @@ import FormStatusModal from "@/components/ui/FormStatusModal.astro";
     const sendData = async (formData: FormData): Promise<void> => {
         const abortController = new AbortController();
 
-        const timeoutId: NodeJS.Timeout = openDialog(abortController);
+        const timeoutId: NodeJS.Timeout = openDialog(abortController, isRequestResolved);
 
         await fetch("/api/contact", {
             method: 'POST',
