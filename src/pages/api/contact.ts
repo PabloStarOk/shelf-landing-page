@@ -21,22 +21,22 @@ const createUserForm = (formData: FormData): UserForm => {
     return data;
 }
 
+const validateField = (
+    value: string,
+    regex: RegExp | null,
+    isOptional: boolean
+): boolean => {
+    if ((!value && !isOptional) || (regex && !regex.test(value))) {
+        return false;
+    }
+    return true; // No errors
+}
+
 const validateForm = (formData: FormData): boolean => {
     const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const phoneCodeRegex = /^[0-9]{1,3}$/;
     const phoneNumberRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
     const maxLengthRegex = /^.{0,400}$/;
-
-    const validateField = (
-        value: string,
-        regex: RegExp | null,
-        isOptional: boolean
-    ): boolean => {
-        if ((!value && !isOptional) || (regex && !regex.test(value))) {
-            return false;
-        }
-        return true; // No errors
-    }
 
     const userForm = createUserForm(formData);
 
