@@ -2,47 +2,77 @@ export const prerender = false;
 import { dbInfo, supabase } from "@/lib/database/supabase";
 import type { APIRoute } from "astro";
 
-const validateForm = (formData: FormData): boolean => {
-    const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    const phoneCodeRegex = /^[0-9]{1,3}$/;
-    const phoneNumberRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-    const maxLengthRegex = /^.{0,400}$/;
+type UserForm = {
+    name: string;
+    email: string;
+    phone_code: number;
+    phone_number: number;
+    message: string;
+}
 
-    const validateField = (
-        value: string,
-        regex: RegExp | null,
-        isOptional: boolean
-    ): boolean => {
-        if ((!value && !isOptional) || (regex && !regex.test(value))) {
-            return false;
-        }
-        return true; // No errors
+type ValidationPatterns = {
+    email: RegExp;
+    phoneCode: RegExp;
+    phoneNumber: RegExp;
+    message: RegExp;
+}
+
+const validationPatterns: ValidationPatterns = {
+    email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    phoneCode: /^[0-9]{1,3}$/,
+    phoneNumber: /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,
+    message: /^.{0,400}$/,
+}
+
+const createUserForm = (formData: FormData): UserForm => {
+    const data: UserForm = {
+        name: formData.get("name")?.toString() ?? "",
+        email: formData.get("email")?.toString() ?? "",
+        phone_code: parseInt(formData.get("phone-code")?.toString() ?? ""),
+        phone_number: parseInt(formData.get("phone-number")?.toString() ?? ""),
+        message: formData.get("message")?.toString() ?? ""
     }
+    return data;
+}
+
+const validateField = (
+    value: string,
+    regex: RegExp | null,
+    isOptional: boolean
+): boolean => {
+    if ((!value && !isOptional) || (regex && !regex.test(value))) {
+        return false;
+    }
+    return true; // No errors
+}
+
+const validateForm = (formData: FormData): boolean => {
+    const userForm = createUserForm(formData);
 
     const validationMap = [
         {
-            value: formData.get("name")?.toString() ?? "",
+            value: userForm.name,
             regex: null,
             isOptional: false
         },
         {
-            value: formData.get("email")?.toString() ?? "",
-            regex: emailRegex,
+            value: userForm.email,
+            regex: validationPatterns.email,
             isOptional: false
         },
         {
-            value: formData.get("phone-code")?.toString() ?? "",
-            regex: phoneCodeRegex,
+            value: userForm.phone_code.toString(),
+            regex: validationPatterns.phoneCode,
             isOptional: false
         },
         {
-            value: formData.get("phone-number")?.toString() ?? "",
-            regex: phoneNumberRegex,
+            value: userForm.phone_number.toString(),
+            regex: validationPatterns.phoneNumber,
             isOptional: false
         },
         {
-            value: formData.get("message")?.toString() ?? "",
-            regex: maxLengthRegex,
+            value: userForm.message,
+            regex: validationPatterns.message,
             isOptional: true
         }
     ];
@@ -66,15 +96,9 @@ export const POST: APIRoute = async ({ request }): Promise<Response> => {
         if (!validateForm(formData))
             return createResponse("Form data is not valid.", 400);
 
-        const data = {
-            name: formData.get("name")?.toString() ?? "",
-            email: formData.get("email")?.toString() ?? "",
-            phone_code: formData.get("phone-code") as number | null,
-            phone_number: formData.get("phone-number") as number | null,
-            message: formData.get("message")?.toString() ?? ""
-        }
+        const userForm: UserForm = createUserForm(formData);
 
-        const { error } = await supabase.schema(dbInfo.schema).from(dbInfo.formsTable).insert(data);
+        const { error } = await supabase.schema(dbInfo.schema).from(dbInfo.formsTable).insert(userForm);
 
         return !error
             ? createResponse("Form data was saved successfully.", 201)
