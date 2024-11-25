@@ -22,7 +22,8 @@ function setCookie(cookie: Cookie, days = 365) {
     document.cookie = cookie.name + "=" + cookie.value + ";" + expires + ";path=/";
 }
 
-export async function updateAnalytic(name: AnalyticNames, quantity: number, cookie?: Cookie) {
+// Returns true if the value was updated, false otherwise.
+export async function updateAnalytic(name: AnalyticNames, quantity: number, cookie?: Cookie): Promise<boolean> {
     const dataToUpdate = JSON.stringify({
         name: AnalyticNames[name],
         quantity
@@ -42,5 +43,8 @@ export async function updateAnalytic(name: AnalyticNames, quantity: number, cook
                 setCookie(cookie);
             return response.ok; // TODO: Update automatically UserInteractions metric card.
         }).catch(() => { return false; })
+        return true;
     }
+
+    return false;
 }

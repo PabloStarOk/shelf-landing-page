@@ -15,7 +15,9 @@ import { track } from "@vercel/analytics";
         value: "true"
     }
     contactButton.addEventListener("click", async () => {
-        await updateAnalytic(AnalyticNames.UserInteractions, 1, cookie);
+        const wasUpdated: boolean =await updateAnalytic(AnalyticNames.UserInteractions, 1, cookie);
+        if (!wasUpdated)
+            return;
 
         // HACK: Update new value manually in the analytic card.
         const analyticCard: HTMLParagraphElement = document.getElementById("metric-interactions-amount") as HTMLParagraphElement;
