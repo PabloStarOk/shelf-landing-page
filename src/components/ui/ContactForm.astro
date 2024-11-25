@@ -29,6 +29,11 @@ import { validateForm } from "@/lib/validation/validation.ts";
             clearTimeout(timeoutId)
             if (response.ok) {
                 form.reset();
+
+                // HACK: Update new value manually in the analytic card.
+                const analyticCard: HTMLParagraphElement = document.getElementById("metric-forms-sent-amount") as HTMLParagraphElement;
+                const newValue: number = parseInt(analyticCard.textContent ?? "0") + 1;
+                analyticCard.textContent = newValue.toString();
             }
             showDialogResult(response.ok, response.ok ? "success" : "error");
 

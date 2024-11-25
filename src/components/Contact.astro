@@ -5,6 +5,52 @@ import ProjectHub from "@/components/ui/ProjectHub.astro";
 import LayoutSection from "@/layouts/LayoutSection.astro";
 ---
 
+<script>
+    import { AnalyticNames, updateAnalytic, type Cookie } from "@/lib/analytics/analyticsHub";
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const visitsElement: HTMLParagraphElement = document.getElementById("metric-visits-amount") as HTMLParagraphElement;
+    const submissionsElement: HTMLParagraphElement = document.getElementById("metric-forms-sent-amount") as HTMLParagraphElement;
+    const interactionsElement: HTMLParagraphElement = document.getElementById("metric-interactions-amount") as HTMLParagraphElement;
+
+    const cookie: Cookie = {
+        name: "visited",
+        value: "true"
+    }
+    await updateAnalytic(AnalyticNames.PageVisits, 1, cookie);
+
+
+    // ---- Fill metric cards. ----
+    await fetch("/api/analytics", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    .then((response) => {
+        if (!response.ok)
+            return;
+
+        response.json().then((result) => {
+            result.forEach((analytic: any) => {
+                if (analytic.name === AnalyticNames.PageVisits) {
+                    visitsElement.textContent = analytic.count;
+                }
+                else if (analytic.name === AnalyticNames.FormSubmissions) {
+                    submissionsElement.textContent = analytic.count;
+                }
+                else if (analytic.name === AnalyticNames.UserInteractions) {
+                    interactionsElement.textContent = analytic.count;
+                }
+            })
+        });
+    })
+    .catch((error) => {
+        console.log(error);
+    })
+})
+</script>
+
 <LayoutSection title='contact' height={1117}>
     <div class="wrapper">
         <h1>Contacto & Información</h1>

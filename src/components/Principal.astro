@@ -5,13 +5,32 @@ import LayoutSection from "@/layouts/LayoutSection.astro";
 import { Image } from "astro:assets";
 ---
 
+<script>
+    import { AnalyticNames, updateAnalytic, type Cookie } from "@/lib/analytics/analyticsHub";
+    const contactButton: HTMLLinkElement = document.getElementById("contact-button") as HTMLLinkElement;
+
+    const cookie: Cookie = {
+        name: "interacted",
+        value: "true"
+    }
+    contactButton.addEventListener("click", async () => {
+        await updateAnalytic(AnalyticNames.UserInteractions, 1, cookie);
+
+        // HACK: Update new value manually in the analytic card.
+        const analyticCard: HTMLParagraphElement = document.getElementById("metric-interactions-amount") as HTMLParagraphElement;
+        const newValue: number = parseInt(analyticCard.textContent ?? "0") + 1;
+        analyticCard.textContent = newValue.toString();
+    });
+
+</script>
+
 <LayoutSection title="principal" height={843}>
     <div class="containerPrincipal">
         <div class="left">
             <IconApp />
             <h1>Shelf</h1>
             <p>La mejor herramienta para la gestión de tu inventario</p>
-            <a href="#contact">Contactanos</a>
+            <a id="contact-button" href="#contact">Contactanos</a>
         </div>
         <div class="right">
             <div class="w-auto h-auto">
