@@ -1,3 +1,25 @@
+<script>
+    import { AnalyticNames, updateAnalytic, type Cookie } from "@/lib/analytics/analyticsHub";
+import { track } from "@vercel/analytics";
+
+    const contactButton: HTMLLinkElement = document.getElementById("contact-nav") as HTMLLinkElement;
+    const cookie: Cookie = {
+        name: "interacted",
+        value: "true"
+    }
+    contactButton.addEventListener("click", async () => {
+        const wasUpdated: boolean = await updateAnalytic(AnalyticNames.UserInteractions, 1, cookie);
+        if (!wasUpdated)
+            return;
+
+        // HACK: Update new value manually in the analytic card.
+        const analyticCard: HTMLParagraphElement = document.getElementById("metric-interactions-amount") as HTMLParagraphElement;
+        const newValue: number = parseInt(analyticCard.textContent ?? "0") + 1;
+        analyticCard.textContent = newValue.toString();
+        track("Form Submissions", { location: "Menu Header" });
+    });
+</script>
+
 <header class="bg-background-brand-primary rounded-lg p-3 !text-text-default-neutral sticky z-50 top-[24px] left-[48px] right-[48px]">
     <nav class="flex flex-row gap-28">
         <img alt="icon del software" src="./favIconNoBackground.svg"/>
@@ -15,7 +37,7 @@
                 <h6><a href="#prototype">Prototipo</a></h6>
             </li>
             <li>
-                <h6><a href="#contact">Contactanos</a></h6>
+                <h6><a id="contact-nav" href="#contact">Contactanos</a></h6>
             </li>
         </ul>
     </nav>

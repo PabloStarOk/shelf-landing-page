@@ -1,5 +1,6 @@
 export const prerender = false;
 import { dbInfo, supabase } from "@/lib/database/supabase";
+import { track } from "@vercel/analytics";
 import type { APIRoute } from "astro";
 
 type UserForm = {
@@ -100,9 +101,12 @@ export const POST: APIRoute = async ({ request }): Promise<Response> => {
 
         const { error } = await supabase.schema(dbInfo.schema).from(dbInfo.formsTable).insert(userForm);
 
-        return !error
-            ? createResponse("Form data was saved successfully.", 201)
-            : createResponse("Failed to save form data. Please try again later.", 500);
+        if (!error) {
+            track("Form Submissions");
+            return createResponse("Form data was saved successfully.", 201)
+        } else {
+            return createResponse("Failed to save form data. Please try again later.", 500);
+        }
     } catch {
         return createResponse("An unexpected error occurred.", 500);
     }
