@@ -102,7 +102,7 @@ export const POST: APIRoute = async ({ request }): Promise<Response> => {
         const { error } = await supabase.schema(dbInfo.schema).from(dbInfo.formsTable).insert(userForm);
 
         if (!error) {
-            track("Form Submissions");
+            await track("Form Submissions");
             return createResponse("Form data was saved successfully.", 201)
         } else {
             return createResponse("Failed to save form data. Please try again later.", 500);
