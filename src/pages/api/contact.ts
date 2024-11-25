@@ -1,6 +1,6 @@
 export const prerender = false;
 import { dbInfo, supabase } from "@/lib/database/supabase";
-import { track } from "@vercel/analytics";
+import { track } from "@vercel/analytics/server";
 import type { APIRoute } from "astro";
 
 type UserForm = {
