@@ -1,6 +1,6 @@
 <script>
     import { AnalyticNames, updateAnalytic, type Cookie } from "@/lib/analytics/analyticsHub";
-import { track } from "@vercel/analytics";
+import { track } from "@vercel/analytics/server";
 
     const contactButton: HTMLLinkElement = document.getElementById("contact-nav") as HTMLLinkElement;
     const cookie: Cookie = {
@@ -31,13 +31,13 @@ import { track } from "@vercel/analytics";
                 <h6><a href="#valueProposal">Propuesta de valor</a></h6>
             </li>
             <li>
-                <h6><a href="#feature">Caracteristicas</a></h6>
+                <h6><a href="#feature">Características</a></h6>
             </li>
             <li>
                 <h6><a href="#prototype">Prototipo</a></h6>
             </li>
             <li>
-                <h6><a id="contact-nav" href="#contact">Contactanos</a></h6>
+                <h6><a id="contact-nav" href="#contact">Contáctanos</a></h6>
             </li>
         </ul>
     </nav>
