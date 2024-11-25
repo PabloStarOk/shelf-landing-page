@@ -7,6 +7,7 @@ import { Image } from "astro:assets";
 
 <script>
     import { AnalyticNames, updateAnalytic, type Cookie } from "@/lib/analytics/analyticsHub";
+import { track } from "@vercel/analytics";
     const contactButton: HTMLLinkElement = document.getElementById("contact-button") as HTMLLinkElement;
 
     const cookie: Cookie = {
@@ -20,6 +21,7 @@ import { Image } from "astro:assets";
         const analyticCard: HTMLParagraphElement = document.getElementById("metric-interactions-amount") as HTMLParagraphElement;
         const newValue: number = parseInt(analyticCard.textContent ?? "0") + 1;
         analyticCard.textContent = newValue.toString();
+        track("Form Submissions", { location: "Principal Section" });
     });
 
 </script>
